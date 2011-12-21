@@ -1,0 +1,88 @@
+h1. DirtyHashy
+
+Dirty tracking within hashes with indifferent access
+
+h2. Introduction
+
+"Dirty tracking / objects":http://ryandaigle.com/articles/2008/3/31/what-s-new-in-edge-rails-dirty-objects is a common programming concept. In short, it is the mechanism to track whether or not the attributes of an object have been changed and if so, which ones.
+
+It is mostly implemented within ORM's, a couple of examples in the Ruby world are "ActiveRecord":http://ar.rubyonrails.org/classes/ActiveRecord/Dirty.html, "DataMapper":http://rubydoc.info/gems/dm-core/1.1.0/file/README.rdoc, "Mongoid":http://mongoid.org/docs/documents/dirty.html and "CouchRest Model":http://www.couchrest.info/model/dirty_tracking.html.
+
+Ironically, I haven't found a gem suited for the simple desire of dirty tracking within Ruby hashes. Eventually, you can compare attributes of an ORM object with a Hash containing values.
+
+h2. Installation
+
+h3. Using Bundler
+
+Add DirtyHashy in @Gemfile@ as a gem dependency:
+
+<pre>
+  gem "dirty_hashy"
+</pre>
+
+Run the following in your console to install with Bundler:
+
+<pre>
+  bundle install
+</pre>
+
+h2. Usage
+
+Using @DirtyHashy@ is pretty straightforward and can be used as follows:
+
+<pre>
+  require "rubygems"
+  require "dirty_hashy"
+
+  h = DirtyHashy.new
+  h.dirty? #=> false
+  h[:name] = "Paul"
+  h.dirty? #=> true
+  h.was :name #=> nil
+  h.change :name #=> [nil, "Paul"]
+  h.clean_up!
+  h.dirty? #=> false
+  h[:name] #=> "Paul"
+  h[:name] = "Paul"
+  h.dirty? #=> false
+  h[:name] = "Engel"
+  h.change :name #=> ["Paul", "Engel"]
+  h[:name] = "Foo"
+  h.was :name #=> "Paul"
+  h.changes #=> {"name"=>["Paul", "Foo"]}
+  h["company"] = "Internetbureau Holder B.V."
+  h.changes #=> {"company"=>[nil, "Internetbureau Holder B.V."], "name"=>["Paul", "Foo"]}
+  h.merge! :name => "Paul"
+  h.changes #=> {"company"=>[nil, "Internetbureau Holder B.V."]}
+  h.clean_up!
+  h.dirty? #=> false
+  h.changes #=> {}
+  h.delete :company
+  h.dirty? #=> true
+  h.was :company #=> "Internetbureau Holder B.V."
+  h.change :company #=> ["Internetbureau Holder B.V.", nil]
+</pre>
+
+h2. Last remarks
+
+Please check out "test/unit/test_dirty_hashy.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_hashy.rb the tests available. You can run the unit tests with @rake@ within the terminal.
+
+Also, the DirtyHashy repo is provided with @script/console@ which you can use for testing purposes.
+
+Note: *DirtyHashy is successfully tested using Ruby 1.8.7 and Ruby 1.9.2*
+
+h2. Contact me
+
+For support, remarks and requests please mail me at "paul.engel@holder.nl":mailto:paul.engel@holder.nl.
+
+h2. License
+
+Copyright (c) 2011 Paul Engel, released under the MIT license
+
+"http://holder.nl":http://holder.nl – "http://codehero.es":http://codehero.es – "http://gettopup.com":http://gettopup.com – "http://github.com/archan937":http://github.com/archan937 – "http://twitter.com/archan937":http://twitter.com/archan937 – "paul.engel@holder.nl":mailto:paul.engel@holder.nl
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

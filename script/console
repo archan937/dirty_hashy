@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+require "rubygems"
+require "bundler"
+
+Bundler.require :gem_default, :gem_development
+
+puts "Loading DirtyHashy development environment (#{DirtyHashy::VERSION})"
+puts "[0] pry(main)> @h = DirtyHashy.new"
+
+@h = DirtyHashy.new
+Pry.start

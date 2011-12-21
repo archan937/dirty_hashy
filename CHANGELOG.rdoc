@@ -1,0 +1,5 @@
+= DirtyHashy CHANGELOG
+
+== Version 0.1.0 (December 22, 2011)
+
+* Initial release
