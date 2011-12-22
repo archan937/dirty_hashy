@@ -1,7 +1,17 @@
 require "active_support/hash_with_indifferent_access"
 require "dirty_hashy/version"
+require "method_map"
 
 class DirtyHashy < HashWithIndifferentAccess
+
+  def self.new(constructor = {}, map_methods = false)
+    super(constructor).tap do |instance|
+      if map_methods
+        instance.extend MethodMap
+        instance.dirty_map!
+      end
+    end
+  end
 
   alias :_regular_writer :regular_writer
   def regular_writer(key, value)
