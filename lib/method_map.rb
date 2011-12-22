@@ -2,7 +2,7 @@ module MethodMap
 
   def dirty_map!(mapped = nil, restricted_keys = nil)
     @mapped = mapped || self
-    @restricted_keys = restricted_keys
+    @restricted_keys = (restricted_keys || []).collect(&:to_s)
     map_method(:changes)
     map_method(:dirty?)
     map_method(:changed?)
@@ -10,7 +10,7 @@ module MethodMap
     map_method(/^([\w_]+)_changed\?$/, :changed?)
     map_method(/^([\w_]+)_change$/, :change)
     map_method(/^([\w_]+)_was$/, :was)
-    map_method(/(^[\w_]+)=$/, Proc.new{ |match| :[]= if @restricted_keys.nil? || @restricted_keys.include?(match.to_s) })
+    map_method(/(^[\w_]+)=$/, Proc.new{ |match| :[]= if @restricted_keys.empty? || @restricted_keys.include?(match.to_s) })
     map_method(/(^[\w_]+)$/, Proc.new{ |match| :[] if (@mapped.keys + @mapped.changes.keys).include?(match.to_s) })
   end
 
