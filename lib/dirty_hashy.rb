@@ -1,5 +1,6 @@
 require "active_support/hash_with_indifferent_access"
 require "dirty_hashy/version"
+require "dirty_attributes"
 require "method_map"
 
 class DirtyHashy < HashWithIndifferentAccess
