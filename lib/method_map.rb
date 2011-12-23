@@ -7,11 +7,11 @@ module MethodMap
     map_method(:dirty?)
     map_method(:changed?)
     map_method(:clean_up!)
-    map_method(/^([\w_]+)_changed\?$/, :changed?)
-    map_method(/^([\w_]+)_change$/, :change)
-    map_method(/^([\w_]+)_was$/, :was)
-    map_method(/(^[\w_]+)=$/, Proc.new{ |match| :[]= if @restricted_keys.empty? || @restricted_keys.include?(match.to_s) })
-    map_method(/(^[\w_]+)$/, Proc.new{ |match| :[] if (@mapped.keys + @mapped.changes.keys).include?(match.to_s) })
+    map_method(/^([\w_]+)_changed\?$/, Proc.new{ |match| :changed? if map_key? match })
+    map_method(/^([\w_]+)_change$/   , Proc.new{ |match| :change   if map_key? match })
+    map_method(/^([\w_]+)_was$/      , Proc.new{ |match| :was      if map_key? match })
+    map_method(/(^[\w_]+)=$/         , Proc.new{ |match| :[]=      if accept_key? match })
+    map_method(/(^[\w_]+)$/          , Proc.new{ |match| :[]       if map_key? match })
   end
 
   def map_method(pattern, method_or_proc = nil)
@@ -28,6 +28,14 @@ module MethodMap
   end
 
 private
+
+  def map_key?(key)
+    (@mapped.keys + @mapped.changes.keys).include?(key.to_s)
+  end
+
+  def accept_key?(key)
+    @restricted_keys.empty? || @restricted_keys.include?(key.to_s)
+  end
 
   def method_map
     @method_map ||= {}
