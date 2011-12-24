@@ -4,7 +4,7 @@ Dirty tracking within hashes with indifferent access or objects as it is expecte
 
 h2. Introduction
 
-"Dirty tracking / objects":http://ryandaigle.com/articles/2008/3/31/what-s-new-in-edge-rails-dirty-objects is a common programming concept. In short, it is the mechanism to track whether or not the attributes of an object have been changed and if so, which ones.
+"Dirty tracking / objects":http://ryandaigle.com/articles/2008/3/31/what-s-new-in-edge-rails-dirty-objects is a common programming concept. In short, it is the concept of tracking whether or not the attributes of an object have been changed and if so, which ones.
 
 It is mostly implemented within ORM's, a couple of examples in the Ruby world are "ActiveRecord":http://ar.rubyonrails.org/classes/ActiveRecord/Dirty.html, "DataMapper":http://rubydoc.info/gems/dm-core/1.1.0/file/README.rdoc, "Mongoid":http://mongoid.org/docs/documents/dirty.html and "CouchRest Model":http://www.couchrest.info/model/dirty_tracking.html.
 
@@ -159,6 +159,7 @@ You can use @Person@ objects as you would expect:
   p.clean_up!
   p.dirty? #=> false
   p.name #=> "Paul"
+  p.foo = "bar" #=> NoMethodError: undefined method `foo=' for #<Person:0x00000100d89860>
 </pre>
 
 And last but not least: don't care about specifying the attributes available? Well don't! ;)
