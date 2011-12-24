@@ -38,6 +38,7 @@ Using @DirtyHashy@ is pretty straightforward and can be used as follows:
   h.dirty? #=> false
   h[:name] = "Paul"
   h.dirty? #=> true
+  h.changed? :name #=> true
   h.was :name #=> nil
   h.change :name #=> [nil, "Paul"]
   h.clean_up!
@@ -63,9 +64,133 @@ Using @DirtyHashy@ is pretty straightforward and can be used as follows:
   h.change :company #=> ["Internetbureau Holder B.V.", nil]
 </pre>
 
+h3. Method mapping DirtyHashy
+
+You can map methods within a DirtyHashy in order to provide convenience methods like @name@, @name=@ @name_changed?@, @name_was@ and @name_change@. Just pass @true@ for the @map_methods@ argument when initializing a DirtyHashy:
+
+<pre>
+  require "rubygems"
+  require "dirty_hashy"
+
+  h = DirtyHashy.new({}, true)
+  h.dirty? #=> false
+  h.name = "Paul"
+  h.dirty? #=> true
+  h.name_changed? #=> true
+  h.name_was #=> nil
+  h.name_change #=> [nil, "Paul"]
+  h.clean_up!
+  h.dirty? #=> false
+  h.name #=> "Paul"
+  h.name = "Paul"
+  h.dirty? #=> false
+  h.name = "Engel"
+  h.name_was #=> "Paul"
+  h.name_change #=> ["Paul", "Engel"]
+  h.foo = "Bar"
+  h.changes #=> {"name"=>["Paul", "Engel"], "foo"=>[nil, "Bar"]}
+</pre>
+
+h3. Dirty tracking objects (models)
+
+Like "ActiveModel::Dirty":http://api.rubyonrails.org/classes/ActiveModel/Dirty.html, you can use "DirtyAttributes":https://github.com/archan937/dirty_hashy/blob/master/lib/dirty_attributes.rb to dirty track your own objects (models).
+
+But there are two differences between @ActiveModel::Dirty@ and @DirtyAttributes@:
+
+# Setting up @DirtyAttributes@ is easier to setup than @ActiveModel::Dirty@
+# The implementation of "DirtyAttributes":https://github.com/archan937/dirty_hashy/tree/master/lib is more minimalistic and thus looks a bit cleaner than "ActiveModel::Dirty":https://github.com/rails/rails/blob/master/activemodel/lib/active_model/dirty.rb with "ActiveModel::AttributeMethods":https://github.com/rails/rails/blob/master/activemodel/lib/active_model/attribute_methods.rb
+
+The following illustrates the differences between @DirtyAttributes@ and @ActiveModel::Dirty@ when implementing a simple @Person@ model:
+
+h4. When using ActiveModel::Dirty
+
+<pre>
+  class Person
+    include ActiveModel::Dirty
+    define_attribute_methods = [:name]
+
+    def name
+      @name
+    end
+
+    def name=(val)
+      name_will_change! unless val == @name
+      @name = val
+    end
+
+    def save
+      @previously_changed = changes
+      @changed_attributes.clear
+    end
+  end
+</pre>
+
+h4. When using DirtyAttributes
+
+<pre>
+  class Person
+    include DirtyAttributes
+    attrs :name
+
+    def save
+      clean_up!
+    end
+  end
+</pre>
+
+You can use @Person@ objects as expected:
+
+<pre>
+  require "rubygems"
+  require "dirty_hashy"
+
+  class Person
+    include DirtyAttributes
+    attrs :name
+  end
+
+  p = Person.new
+  p.dirty? #=> false
+  p.name #=> nil
+  p.name = "Paul"
+  p.dirty? #=> true
+  p.name_changed? #=> true
+  p.name_was #=> nil
+  p.name_change #=> [nil, "Paul"]
+  p.clean_up!
+  p.dirty? #=> false
+  p.name #=> "Paul"
+</pre>
+
+And last but not least: don't care about specifying the available attributes? Well don't! ;)
+
+<pre>
+  require "rubygems"
+  require "dirty_hashy"
+
+  class Person
+    include DirtyAttributes
+  end
+
+  p = Person.new
+  p.dirty? #=> false
+  p.name #=> NoMethodError: undefined method `name' for #<Person:0x00000100d5cd88>
+  p.name = "Paul"
+  p.dirty? #=> true
+  p.name #=> "Paul"
+  p.name_changed? #=> true
+  p.name_was #=> nil
+  p.name_change #=> [nil, "Paul"]
+  p.clean_up!
+  p.dirty? #=> false
+  p.name #=> "Paul"
+  p.foo = "bar"
+  p.foo #=> "bar"
+</pre>
+
 h2. Last remarks
 
-Please check out "test/unit/test_dirty_hashy.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_hashy.rb the tests available. You can run the unit tests with @rake@ within the terminal.
+Please check out "test/unit/test_dirty_hashy.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_hashy.rb and "test/unit/test_dirty_attributes.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_attributes.rb the tests available. You can run the unit tests with @rake@ within the terminal.
 
 Also, the DirtyHashy repo is provided with @script/console@ which you can use for testing purposes.
 
