@@ -9,8 +9,8 @@ module MethodMap
     map_method(/^([\w_]+)_changed\?$/, :changed?, true)
     map_method(/^([\w_]+)_change$/, :change, true)
     map_method(/^([\w_]+)_was$/, :was, true)
-    map_method(/(^[\w_]+)=$/, :[]=)
-    map_method(/(^[\w_]+)$/, :[], true)
+    map_method(/^([\w_]+)=$/, :[]=)
+    map_method(/^([\w_]+)$/, :[], true)
   end
 
   def map_method(pattern, method_or_proc = nil, args = nil)
