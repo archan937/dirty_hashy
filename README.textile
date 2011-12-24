@@ -66,7 +66,7 @@ Using @DirtyHashy@ is pretty straightforward and can be used as follows:
 
 h3. Method mapping DirtyHashy
 
-You can map methods within a DirtyHashy in order to provide convenience methods like @name@, @name=@ @name_changed?@, @name_was@ and @name_change@. Just pass @true@ for the @map_methods@ argument when initializing a DirtyHashy:
+You can map methods within a DirtyHashy in order to provide convenience methods like @name@, @name=@, @name_changed?@, @name_was@ and @name_change@. Just pass @true@ for the @map_methods@ argument when initializing a DirtyHashy:
 
 <pre>
   require "rubygems"
@@ -74,6 +74,7 @@ You can map methods within a DirtyHashy in order to provide convenience methods 
 
   h = DirtyHashy.new({}, true)
   h.dirty? #=> false
+  h.name #=> NoMethodError: undefined method `name' for {}:DirtyHashy
   h.name = "Paul"
   h.dirty? #=> true
   h.name_changed? #=> true
@@ -93,9 +94,7 @@ You can map methods within a DirtyHashy in order to provide convenience methods 
 
 h3. Dirty tracking objects (models)
 
-Like "ActiveModel::Dirty":http://api.rubyonrails.org/classes/ActiveModel/Dirty.html, you can use "DirtyAttributes":https://github.com/archan937/dirty_hashy/blob/master/lib/dirty_attributes.rb to dirty track your own objects (models).
-
-But there are two differences between @ActiveModel::Dirty@ and @DirtyAttributes@:
+Like "ActiveModel::Dirty":http://api.rubyonrails.org/classes/ActiveModel/Dirty.html, you can use "DirtyAttributes":https://github.com/archan937/dirty_hashy/blob/master/lib/dirty_attributes.rb to dirty track your own objects (models). But there are two differences:
 
 # Setting up @DirtyAttributes@ is easier to setup than @ActiveModel::Dirty@
 # The implementation of "DirtyAttributes":https://github.com/archan937/dirty_hashy/tree/master/lib is more minimalistic and thus looks a bit cleaner than "ActiveModel::Dirty":https://github.com/rails/rails/blob/master/activemodel/lib/active_model/dirty.rb with "ActiveModel::AttributeMethods":https://github.com/rails/rails/blob/master/activemodel/lib/active_model/attribute_methods.rb
@@ -138,7 +137,7 @@ h4. When using DirtyAttributes
   end
 </pre>
 
-You can use @Person@ objects as expected:
+You can use @Person@ objects as you would expect:
 
 <pre>
   require "rubygems"
@@ -162,7 +161,7 @@ You can use @Person@ objects as expected:
   p.name #=> "Paul"
 </pre>
 
-And last but not least: don't care about specifying the available attributes? Well don't! ;)
+And last but not least: don't care about specifying the attributes available? Well don't! ;)
 
 <pre>
   require "rubygems"
@@ -194,7 +193,7 @@ Please check out "test/unit/test_dirty_hashy.rb":https://github.com/archan937/di
 
 Also, the DirtyHashy repo is provided with @script/console@ which you can use for testing purposes.
 
-Note: *DirtyHashy is successfully tested using Ruby 1.8.7 and Ruby 1.9.2*
+Note: *DirtyHashy is successfully tested using Ruby 1.8.7, Ruby 1.9.2 and Ruby 1.9.3*
 
 h2. Contact me
 
