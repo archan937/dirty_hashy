@@ -88,8 +88,35 @@ You can map methods within a DirtyHashy in order to provide convenience methods 
   h.name = "Engel"
   h.name_was #=> "Paul"
   h.name_change #=> ["Paul", "Engel"]
-  h.foo = "Bar"
-  h.changes #=> {"name"=>["Paul", "Engel"], "foo"=>[nil, "Bar"]}
+  h.foo = "bar"
+  h.changes #=> {"name"=>["Paul", "Engel"], "foo"=>[nil, "bar"]}
+</pre>
+
+h3. Method mapping DirtyHashy with key restriction
+
+Along with providing convenience methods, you can also restrict the range of keys you are permitted to read / write / merge / replace of a DirtyHash:
+
+<pre>
+  require "rubygems"
+  require "dirty_hashy"
+
+  h = DirtyHashy.new({}, true, [:name])
+  h.dirty? #=> false
+  h.name #=> nil
+  h.name = "Paul"
+  h.dirty? #=> true
+  h.name_changed? #=> true
+  h.name_was #=> nil
+  h.name_change #=> [nil, "Paul"]
+  h.merge! :name => "Engel"
+  h.name #=> "Engel"
+  h.name_was #=> nil
+  h.name_change #=> [nil, "Engel"]
+  h.foo #=> NoMethodError: undefined method `foo' for {"name"=>"Engel"}:DirtyHashy
+  h.foo = "bar" #=> NoMethodError: undefined method `foo=' for {"name"=>"Engel"}:DirtyHashy
+  h.clean_up!
+  h.replace :name => "Paul"
+  h.changes #=> {"name"=>["Engel", "Paul"]}
 </pre>
 
 h3. Dirty tracking objects (models)

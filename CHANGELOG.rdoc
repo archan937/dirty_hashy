@@ -1,5 +1,11 @@
 = DirtyHashy CHANGELOG
 
+== Version 0.1.2 (December 24, 2011)
+
+* Moved restricted keys logic from MethodMap to DirtyHash and thus being able to restrict keys of a DirtyHashy without dirty mapping ^^
+* Corrected DirtyHashy.replace and DirtyHashy.clear in order to dirty track involved changes
+* Improved :attributes= implementation within DirtyAttributes
+
 == Version 0.1.1 (December 24, 2011)
 
 * Added convenience methods (with MethodMap) like +name+, +name=+, +name_changed?+, +name_was+ and +name_change+
