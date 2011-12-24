@@ -1,5 +1,10 @@
 = DirtyHashy CHANGELOG
 
+== Version 0.1.1 (December 24, 2011)
+
+* Added convenience methods (with MethodMap) like +name+, +name=+, +name_changed?+, +name_was+ and +name_change+
+* Added DirtyAttributes with which you can implement dirty tracking within objects (models)
+
 == Version 0.1.0 (December 22, 2011)
 
 * Initial release
