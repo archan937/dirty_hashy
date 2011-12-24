@@ -63,6 +63,38 @@ module Unit
         assert_equal nil, person.name_change
         assert_equal [nil, "Bar"], person.foo_change
         assert_equal({"foo" => [nil, "Bar"]}, person.changes)
+
+        person.attributes.merge! :company => "Internetbureau Holder B.V."
+
+        assert_equal true, person.dirty?
+        assert_equal true, person.changed?
+        assert_equal false, person.name_changed?
+        assert_equal true, person.foo_changed?
+        assert_equal true, person.company_changed?
+        assert_equal nil, person.name_change
+        assert_equal [nil, "Bar"], person.foo_change
+        assert_equal [nil, "Internetbureau Holder B.V."], person.company_change
+        assert_equal({"foo" => [nil, "Bar"], "company" => [nil, "Internetbureau Holder B.V."]}, person.changes)
+
+        person.attributes.delete :foo
+        person.clean_up!
+
+        assert_equal false, person.dirty?
+        assert_equal false, person.changed?
+        assert_equal({"name" => "Stephan", "company" => "Internetbureau Holder B.V."}, person.attributes)
+        assert_equal({}, person.changes)
+
+        person.attributes = {"name" => "Paul", "city" => "Amsterdam"}
+
+        assert_equal true, person.dirty?
+        assert_equal true, person.changed?
+        assert_equal true, person.name_changed?
+        assert_equal true, person.company_changed?
+        assert_equal true, person.city_changed?
+        assert_equal ["Stephan", "Paul"], person.name_change
+        assert_equal ["Internetbureau Holder B.V.", nil], person.company_change
+        assert_equal [nil, "Amsterdam"], person.city_change
+        assert_equal({"name" => ["Stephan", "Paul"], "company" => ["Internetbureau Holder B.V.", nil], "city" => [nil, "Amsterdam"]}, person.changes)
       end
 
       it "should behave as expected with key restriction" do
@@ -119,6 +151,22 @@ module Unit
         assert_equal false, user.name_changed?
         assert_equal nil, user.name_change
         assert_equal({}, user.changes)
+
+        user.attributes = {"name" => "Paul"}
+
+        assert_equal true, user.dirty?
+        assert_equal true, user.changed?
+        assert_equal true, user.name_changed?
+        assert_equal ["Stephan", "Paul"], user.name_change
+        assert_equal({"name" => ["Stephan", "Paul"]}, user.changes)
+
+        assert_raises(NoMethodError) do
+          user.attributes = {"company" => "Internetbureau Holder B.V."}
+        end
+
+        assert_raises(IndexError) do
+          user.attributes.merge! "company" => "Internetbureau Holder B.V."
+        end
       end
     end
 

@@ -12,7 +12,7 @@ module DirtyAttributes
     end
 
     def attributes
-      @attrs || []
+      @attrs
     end
   end
 
@@ -20,15 +20,17 @@ module DirtyAttributes
     attr_reader :attributes
 
     def initialize
-      attrs = self.class.attributes.inject({}){|h, a| h.merge({a => nil})}
-      @attributes = DirtyHashy.new(attrs).tap do |hashy|
-        dirty_map! hashy, attrs.keys
+      @attributes = DirtyHashy.new({}, true, self.class.attributes).tap do |hashy|
+        dirty_map! hashy
         clean_up!
       end
     end
 
     def attributes=(other)
-      attributes.clear.merge! other
+      attributes.replace other
+    rescue IndexError => e
+      e.message.match /"(.*)"/
+      raise NoMethodError, "undefined method `#{$1}=' for #{self.inspect}"
     end
   end
 
