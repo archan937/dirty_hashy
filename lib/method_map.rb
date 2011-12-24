@@ -15,7 +15,7 @@ module MethodMap
   end
 
   def map_method(pattern, method_or_proc = nil)
-    regex = pattern.is_a?(Regexp) ? pattern : Regexp.new("^#{Regexp.escape(pattern)}$")
+    regex = pattern.is_a?(Regexp) ? pattern : Regexp.new("^#{Regexp.escape(pattern.to_s)}$")
     method_map[regex] = method_or_proc || pattern
   end
 
