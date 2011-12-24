@@ -1,5 +1,9 @@
 = DirtyHashy CHANGELOG
 
+== Version 0.1.3 (December 24, 2011)
+
+* Fixed incorrect regular expressions within dirty_map!
+
 == Version 0.1.2 (December 24, 2011)
 
 * Moved restricted keys logic from MethodMap to DirtyHash and thus being able to restrict keys of a DirtyHashy without dirty mapping ^^

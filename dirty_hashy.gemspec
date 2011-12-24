@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   gem.name          = "dirty_hashy"
   gem.require_paths = ["lib"]
-  gem.version       = "0.1.2"
+  gem.version       = "0.1.3"
 
   gem.add_dependency "activesupport", ">= 3.0.0"
 end
