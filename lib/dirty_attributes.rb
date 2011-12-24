@@ -23,6 +23,7 @@ module DirtyAttributes
       attrs = self.class.attributes.inject({}){|h, a| h.merge({a => nil})}
       @attributes = DirtyHashy.new(attrs).tap do |hashy|
         dirty_map! hashy, attrs.keys
+        clean_up!
       end
     end
 
