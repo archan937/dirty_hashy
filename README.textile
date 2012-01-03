@@ -121,12 +121,12 @@ Along with providing convenience methods, you can also restrict the range of key
 
 h3. Dirty tracking objects (models)
 
-Like "ActiveModel::Dirty":http://api.rubyonrails.org/classes/ActiveModel/Dirty.html, you can use "DirtyAttributes":https://github.com/archan937/dirty_hashy/blob/master/lib/dirty_attributes.rb to dirty track your own objects (models). But there are two differences:
+Like "ActiveModel::Dirty":http://api.rubyonrails.org/classes/ActiveModel/Dirty.html, you can use "Dirty::Attributes":https://github.com/archan937/dirty_hashy/blob/master/lib/dirty_attributes.rb to dirty track your own objects (models). But there are two differences:
 
-# Setting up @DirtyAttributes@ is easier to setup than @ActiveModel::Dirty@
-# The implementation of "DirtyAttributes":https://github.com/archan937/dirty_hashy/tree/master/lib is more minimalistic and thus looks a bit cleaner than "ActiveModel::Dirty":https://github.com/rails/rails/blob/master/activemodel/lib/active_model/dirty.rb with "ActiveModel::AttributeMethods":https://github.com/rails/rails/blob/master/activemodel/lib/active_model/attribute_methods.rb
+# Setting up @Dirty::Attributes@ is easier to setup than @ActiveModel::Dirty@
+# The implementation of "Dirty::Attributes":https://github.com/archan937/dirty_hashy/tree/master/lib is more minimalistic and thus looks a bit cleaner than "ActiveModel::Dirty":https://github.com/rails/rails/blob/master/activemodel/lib/active_model/dirty.rb with "ActiveModel::AttributeMethods":https://github.com/rails/rails/blob/master/activemodel/lib/active_model/attribute_methods.rb
 
-The following illustrates the differences between @DirtyAttributes@ and @ActiveModel::Dirty@ when implementing a simple @Person@ model:
+The following illustrates the differences between @Dirty::Attributes@ and @ActiveModel::Dirty@ when implementing a simple @Person@ model:
 
 h4. When using ActiveModel::Dirty
 
@@ -151,11 +151,11 @@ h4. When using ActiveModel::Dirty
   end
 </pre>
 
-h4. When using DirtyAttributes
+h4. When using Dirty::Attributes
 
 <pre>
   class Person
-    include DirtyAttributes
+    include Dirty::Attributes
     attrs :name
 
     def save
@@ -171,7 +171,7 @@ You can use @Person@ objects as you would expect:
   require "dirty_hashy"
 
   class Person
-    include DirtyAttributes
+    include Dirty::Attributes
     attrs :name
   end
 
@@ -196,7 +196,7 @@ And last but not least: don't care about specifying the attributes available? We
   require "dirty_hashy"
 
   class Person
-    include DirtyAttributes
+    include Dirty::Attributes
   end
 
   p = Person.new
