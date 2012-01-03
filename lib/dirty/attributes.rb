@@ -21,7 +21,7 @@ module Dirty
       attr_reader :attributes
 
       def initialize
-        @attributes = DirtyHashy.new({}, true, self.class.attributes).tap do |hashy|
+        @attributes = DirtyIndifferentHashy.new({}, true, self.class.attributes).tap do |hashy|
           dirty_map! hashy
           clean_up!
         end

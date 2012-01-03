@@ -1,11 +1,11 @@
 require File.expand_path("../../test_helper", __FILE__)
 
 module Unit
-  class TestDirtyHashy < MiniTest::Unit::TestCase
+  class TestDirtyIndifferentHashy < MiniTest::Unit::TestCase
 
-    describe DirtyHashy do
+    describe DirtyIndifferentHashy do
       it "should behave as expected without method mapping and without restricted keys" do
-        hashy = DirtyHashy.new
+        hashy = DirtyIndifferentHashy.new
 
         assert_equal({}, hashy)
         assert_equal false, hashy.dirty?
@@ -20,29 +20,29 @@ module Unit
 
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
-        assert_equal false, hashy.changed?(:name)
+        assert_equal true, hashy.changed?(:name)
         assert_equal true, hashy.changed?("name")
-        assert_equal nil, hashy.change(:name)
+        assert_equal [nil, "Paul"], hashy.change(:name)
         assert_equal [nil, "Paul"], hashy.change("name")
         assert_equal({"name" => [nil, "Paul"]}, hashy.changes)
 
         hashy[:name] = nil
 
-        assert_equal true, hashy.dirty?
-        assert_equal true, hashy.changed?
+        assert_equal false, hashy.dirty?
+        assert_equal false, hashy.changed?
         assert_equal false, hashy.changed?(:name)
-        assert_equal true, hashy.changed?("name")
+        assert_equal false, hashy.changed?("name")
         assert_equal nil, hashy.change(:name)
-        assert_equal [nil, "Paul"], hashy.change("name")
-        assert_equal({"name" => [nil, "Paul"]}, hashy.changes)
+        assert_equal nil, hashy.change("name")
+        assert_equal({}, hashy.changes)
 
         hashy["name"] = "Stephan"
 
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
-        assert_equal false, hashy.changed?(:name)
+        assert_equal true, hashy.changed?(:name)
         assert_equal true, hashy.changed?("name")
-        assert_equal nil, hashy.change(:name)
+        assert_equal [nil, "Stephan"], hashy.change(:name)
         assert_equal [nil, "Stephan"], hashy.change("name")
         assert_equal({"name" => [nil, "Stephan"]}, hashy.changes)
 
@@ -60,9 +60,9 @@ module Unit
 
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
-        assert_equal false, hashy.changed?(:name)
+        assert_equal true, hashy.changed?(:name)
         assert_equal true, hashy.changed?("name")
-        assert_equal nil, hashy.change(:name)
+        assert_equal ["Stephan", "Chris"], hashy.change(:name)
         assert_equal ["Stephan", "Chris"], hashy.change("name")
         assert_equal({"name" => ["Stephan", "Chris"]}, hashy.changes)
 
@@ -76,15 +76,15 @@ module Unit
         assert_equal nil, hashy.change("name")
         assert_equal({}, hashy.changes)
 
-        hashy[:name] = "Paul"
+        hashy["name"] = "Paul"
 
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.changed?(:name)
-        assert_equal false, hashy.changed?("name")
-        assert_equal [nil, "Paul"], hashy.change(:name)
-        assert_equal nil, hashy.change("name")
-        assert_equal({:name => [nil, "Paul"]}, hashy.changes)
+        assert_equal true, hashy.changed?("name")
+        assert_equal ["Stephan", "Paul"], hashy.change(:name)
+        assert_equal ["Stephan", "Paul"], hashy.change("name")
+        assert_equal({"name" => ["Stephan", "Paul"]}, hashy.changes)
 
         hashy["name"] = "Tim"
 
@@ -92,9 +92,9 @@ module Unit
         assert_equal true, hashy.changed?
         assert_equal true, hashy.changed?(:name)
         assert_equal true, hashy.changed?("name")
-        assert_equal [nil, "Paul"], hashy.change(:name)
+        assert_equal ["Stephan", "Tim"], hashy.change(:name)
         assert_equal ["Stephan", "Tim"], hashy.change("name")
-        assert_equal({:name => [nil, "Paul"], "name" => ["Stephan", "Tim"]}, hashy.changes)
+        assert_equal({"name" => ["Stephan", "Tim"]}, hashy.changes)
 
         hashy["company"] = "Holder"
 
@@ -102,19 +102,19 @@ module Unit
         assert_equal true, hashy.changed?
         assert_equal true, hashy.changed?(:name)
         assert_equal true, hashy.changed?("name")
-        assert_equal false, hashy.changed?(:company)
+        assert_equal true, hashy.changed?(:company)
         assert_equal true, hashy.changed?("company")
-        assert_equal [nil, "Paul"], hashy.change(:name)
+        assert_equal ["Stephan", "Tim"], hashy.change(:name)
         assert_equal ["Stephan", "Tim"], hashy.change("name")
-        assert_equal nil, hashy.change(:company)
+        assert_equal [nil, "Holder"], hashy.change(:company)
         assert_equal [nil, "Holder"], hashy.change("company")
-        assert_equal({:name => [nil, "Paul"], "name" => ["Stephan", "Tim"], "company" => [nil, "Holder"]}, hashy.changes)
+        assert_equal({"name" => ["Stephan", "Tim"], "company" => [nil, "Holder"]}, hashy.changes)
 
         hashy["city"] = "Amsterdam"
-        assert_equal({:name => [nil, "Paul"], "name" => ["Stephan", "Tim"], "company" => [nil, "Holder"], "city" => [nil, "Amsterdam"]}, hashy.changes)
+        assert_equal({"name" => ["Stephan", "Tim"], "company" => [nil, "Holder"], "city" => [nil, "Amsterdam"]}, hashy.changes)
 
-        hashy.delete "city"
-        assert_equal({:name => [nil, "Paul"], "name" => ["Stephan", "Tim"], "company" => [nil, "Holder"]}, hashy.changes)
+        hashy.delete :city
+        assert_equal({"name" => ["Stephan", "Tim"], "company" => [nil, "Holder"]}, hashy.changes)
 
         hashy.clean_up!
 
@@ -128,36 +128,36 @@ module Unit
         assert_equal nil, hashy.change("company")
         assert_equal({}, hashy.changes)
 
-        hashy.delete "company"
+        hashy.delete :company
 
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
-        assert_equal false, hashy.changed?(:company)
+        assert_equal true, hashy.changed?(:company)
         assert_equal true, hashy.changed?("company")
-        assert_equal nil, hashy.was(:company)
+        assert_equal "Holder", hashy.was(:company)
         assert_equal "Holder", hashy.was("company")
-        assert_equal nil, hashy.change(:company)
+        assert_equal ["Holder", nil], hashy.change(:company)
         assert_equal ["Holder", nil], hashy.change("company")
 
-        hashy.merge! :name => "Anna", :company => "Internetbureau Holder B.V."
+        hashy.merge! :name => "Paul", :company => "Internetbureau Holder B.V."
 
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.changed?(:name)
-        assert_equal false, hashy.changed?("name")
+        assert_equal true, hashy.changed?("name")
         assert_equal true, hashy.changed?(:company)
         assert_equal true, hashy.changed?("company")
-        assert_equal ["Paul", "Anna"], hashy.change(:name)
-        assert_equal nil, hashy.change("name")
-        assert_equal [nil, "Internetbureau Holder B.V."], hashy.change(:company)
-        assert_equal ["Holder", nil], hashy.change("company")
-        assert_equal({:name => ["Paul", "Anna"], :company => [nil, "Internetbureau Holder B.V."], "company" => ["Holder", nil]}, hashy.changes)
+        assert_equal ["Tim", "Paul"], hashy.change(:name)
+        assert_equal ["Tim", "Paul"], hashy.change("name")
+        assert_equal ["Holder", "Internetbureau Holder B.V."], hashy.change(:company)
+        assert_equal ["Holder", "Internetbureau Holder B.V."], hashy.change("company")
+        assert_equal({"name" => ["Tim", "Paul"], "company" => ["Holder", "Internetbureau Holder B.V."]}, hashy.changes)
       end
 
       it "should behave as expected without method mapping, but with restricted keys" do
-        hashy = DirtyHashy.new({}, false, [:name])
+        hashy = DirtyIndifferentHashy.new({}, false, [:name])
 
-        assert_equal({:name => nil}, hashy)
+        assert_equal({"name" => nil}, hashy)
         assert_equal false, hashy.dirty?
         assert_equal false, hashy.changed?
         assert_equal({}, hashy.changes)
@@ -166,20 +166,24 @@ module Unit
           hashy.name = "Paul"
         end
 
-        hashy[:name] = "Paul"
+        hashy["name"] = "Paul"
 
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.changed?(:name)
+        assert_equal true, hashy.changed?("name")
         assert_equal [nil, "Paul"], hashy.change(:name)
-        assert_equal({:name => [nil, "Paul"]}, hashy.changes)
+        assert_equal [nil, "Paul"], hashy.change("name")
+        assert_equal({"name" => [nil, "Paul"]}, hashy.changes)
 
         hashy[:name] = nil
 
         assert_equal false, hashy.dirty?
         assert_equal false, hashy.changed?
         assert_equal false, hashy.changed?(:name)
+        assert_equal false, hashy.changed?("name")
         assert_equal nil, hashy.change(:name)
+        assert_equal nil, hashy.change("name")
         assert_equal({}, hashy.changes)
 
         hashy[:name] = "Stephan"
@@ -187,49 +191,61 @@ module Unit
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.changed?(:name)
+        assert_equal true, hashy.changed?("name")
         assert_equal [nil, "Stephan"], hashy.change(:name)
-        assert_equal({:name => [nil, "Stephan"]}, hashy.changes)
+        assert_equal [nil, "Stephan"], hashy.change("name")
+        assert_equal({"name" => [nil, "Stephan"]}, hashy.changes)
 
         hashy.clean_up!
 
         assert_equal false, hashy.dirty?
         assert_equal false, hashy.changed?
         assert_equal false, hashy.changed?(:name)
+        assert_equal false, hashy.changed?("name")
         assert_equal nil, hashy.change(:name)
+        assert_equal nil, hashy.change("name")
         assert_equal({}, hashy.changes)
 
-        hashy[:name] = "Chris"
+        hashy["name"] = "Chris"
 
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.changed?(:name)
-        assert_equal "Stephan", hashy.was(:name)
+        assert_equal true, hashy.changed?("name")
+        assert_equal "Stephan", hashy.was("name")
         assert_equal ["Stephan", "Chris"], hashy.change(:name)
-        assert_equal({:name => ["Stephan", "Chris"]}, hashy.changes)
+        assert_equal ["Stephan", "Chris"], hashy.change("name")
+        assert_equal({"name" => ["Stephan", "Chris"]}, hashy.changes)
 
-        hashy[:name] = "Stephan"
+        hashy["name"] = "Stephan"
 
         assert_equal false, hashy.dirty?
         assert_equal false, hashy.changed?
         assert_equal false, hashy.changed?(:name)
+        assert_equal false, hashy.changed?("name")
         assert_equal nil, hashy.change(:name)
+        assert_equal nil, hashy.change("name")
         assert_equal({}, hashy.changes)
 
-        hashy[:name] = "Paul"
+        hashy["name"] = "Paul"
 
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.changed?(:name)
+        assert_equal true, hashy.changed?("name")
         assert_equal ["Stephan", "Paul"], hashy.change(:name)
-        assert_equal({:name => ["Stephan", "Paul"]}, hashy.changes)
+        assert_equal ["Stephan", "Paul"], hashy.change("name")
+        assert_equal({"name" => ["Stephan", "Paul"]}, hashy.changes)
 
-        hashy[:name] = "Tim"
+        hashy["name"] = "Tim"
 
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.changed?(:name)
+        assert_equal true, hashy.changed?("name")
         assert_equal ["Stephan", "Tim"], hashy.change(:name)
-        assert_equal({:name => ["Stephan", "Tim"]}, hashy.changes)
+        assert_equal ["Stephan", "Tim"], hashy.change("name")
+        assert_equal({"name" => ["Stephan", "Tim"]}, hashy.changes)
 
         hashy.clean_up!
         hashy.merge! :name => "Paul"
@@ -237,16 +253,10 @@ module Unit
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.changed?(:name)
+        assert_equal true, hashy.changed?("name")
         assert_equal ["Tim", "Paul"], hashy.change(:name)
-        assert_equal({:name => ["Tim", "Paul"]}, hashy.changes)
-
-        assert_raises(IndexError) do
-          hashy["name"] = "Paul"
-        end
-
-        assert_raises(IndexError) do
-          hashy.changed? "name"
-        end
+        assert_equal ["Tim", "Paul"], hashy.change("name")
+        assert_equal({"name" => ["Tim", "Paul"]}, hashy.changes)
 
         assert_raises(IndexError) do
           hashy[:company]
@@ -278,7 +288,7 @@ module Unit
       end
 
       it "should behave as expected with method mapping and without restricted keys" do
-        hashy = DirtyHashy.new({}, true)
+        hashy = DirtyIndifferentHashy.new({}, true)
 
         assert_equal({}, hashy)
         assert_equal false, hashy.dirty?
@@ -295,11 +305,9 @@ module Unit
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.name_changed?
-        assert_equal false, hashy.changed?(:name)
-        assert_equal true, hashy.changed?("name")
+        assert_equal true, hashy.changed?(:name)
         assert_equal [nil, "Paul"], hashy.name_change
-        assert_equal nil, hashy.change(:name)
-        assert_equal [nil, "Paul"], hashy.change("name")
+        assert_equal [nil, "Paul"], hashy.change(:name)
         assert_equal({"name" => [nil, "Paul"]}, hashy.changes)
 
         hashy.name = nil
@@ -308,10 +316,8 @@ module Unit
         assert_equal false, hashy.changed?
         assert_equal false, hashy.name_changed?
         assert_equal false, hashy.changed?(:name)
-        assert_equal false, hashy.changed?("name")
         assert_equal nil, hashy.name_change
         assert_equal nil, hashy.change(:name)
-        assert_equal nil, hashy.change("name")
         assert_equal({}, hashy.changes)
 
         hashy.name = "Stephan"
@@ -319,11 +325,9 @@ module Unit
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.name_changed?
-        assert_equal false, hashy.changed?(:name)
-        assert_equal true, hashy.changed?("name")
+        assert_equal true, hashy.changed?(:name)
         assert_equal [nil, "Stephan"], hashy.name_change
-        assert_equal nil, hashy.change(:name)
-        assert_equal [nil, "Stephan"], hashy.change("name")
+        assert_equal [nil, "Stephan"], hashy.change(:name)
         assert_equal({"name" => [nil, "Stephan"]}, hashy.changes)
 
         hashy.clean_up!
@@ -332,10 +336,8 @@ module Unit
         assert_equal false, hashy.changed?
         assert_equal false, hashy.name_changed?
         assert_equal false, hashy.changed?(:name)
-        assert_equal false, hashy.changed?("name")
         assert_equal nil, hashy.name_change
         assert_equal nil, hashy.change(:name)
-        assert_equal nil, hashy.change("name")
         assert_equal({}, hashy.changes)
 
         hashy.name = "Chris"
@@ -343,14 +345,11 @@ module Unit
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.name_changed?
-        assert_equal false, hashy.changed?(:name)
-        assert_equal true, hashy.changed?("name")
+        assert_equal true, hashy.changed?(:name)
         assert_equal "Stephan", hashy.name_was
-        assert_equal nil, hashy.was(:name)
-        assert_equal "Stephan", hashy.was("name")
+        assert_equal "Stephan", hashy.was(:name)
         assert_equal ["Stephan", "Chris"], hashy.name_change
-        assert_equal nil, hashy.change(:name)
-        assert_equal ["Stephan", "Chris"], hashy.change("name")
+        assert_equal ["Stephan", "Chris"], hashy.change(:name)
         assert_equal({"name" => ["Stephan", "Chris"]}, hashy.changes)
 
         hashy.name = "Stephan"
@@ -359,41 +358,35 @@ module Unit
         assert_equal false, hashy.changed?
         assert_equal false, hashy.name_changed?
         assert_equal false, hashy.changed?(:name)
-        assert_equal false, hashy.changed?("name")
         assert_equal nil, hashy.name_change
         assert_equal nil, hashy.change(:name)
-        assert_equal nil, hashy.change("name")
         assert_equal({}, hashy.changes)
 
         hashy.name = "Tim"
         hashy.city = "Amsterdam"
 
         assert_equal true, hashy.city_changed?
-        assert_equal false, hashy.changed?(:city)
-        assert_equal true, hashy.changed?("city")
+        assert_equal true, hashy.changed?(:city)
         assert_equal nil, hashy.city_was
         assert_equal [nil, "Amsterdam"], hashy.city_change
         assert_equal({"name" => ["Stephan", "Tim"], "city" => [nil, "Amsterdam"]}, hashy.changes)
 
         hashy.delete :city
-        assert_equal({"name" => ["Stephan", "Tim"], "city" => [nil, "Amsterdam"]}, hashy.changes)
-
-        hashy.delete "city"
         assert_equal({"name" => ["Stephan", "Tim"]}, hashy.changes)
 
         hashy.merge! :company => "Internetbureau Holder B.V."
 
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
-        assert_equal false, hashy.changed?(:name)
+        assert_equal true, hashy.changed?(:name)
         assert_equal true, hashy.changed?("name")
         assert_equal true, hashy.changed?(:company)
-        assert_equal false, hashy.changed?("company")
-        assert_equal nil, hashy.change(:name)
+        assert_equal true, hashy.changed?("company")
+        assert_equal ["Stephan", "Tim"], hashy.change(:name)
         assert_equal ["Stephan", "Tim"], hashy.change("name")
         assert_equal [nil, "Internetbureau Holder B.V."], hashy.change(:company)
-        assert_equal nil, hashy.change("company")
-        assert_equal({"name" => ["Stephan", "Tim"], :company => [nil, "Internetbureau Holder B.V."]}, hashy.changes)
+        assert_equal [nil, "Internetbureau Holder B.V."], hashy.change("company")
+        assert_equal({"name" => ["Stephan", "Tim"], "company" => [nil, "Internetbureau Holder B.V."]}, hashy.changes)
 
         hashy.clean_up!
 
@@ -402,7 +395,7 @@ module Unit
       end
 
       it "should behave as expected with method mapping and with restricted keys" do
-        hashy = DirtyHashy.new({}, true, [:name]) # NOTE: using method mapping AND restricted keys stringifies the restricted keys
+        hashy = DirtyIndifferentHashy.new({}, true, [:name])
 
         assert_equal({"name" => nil}, hashy)
         assert_equal nil, hashy.name
@@ -416,9 +409,9 @@ module Unit
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.name_changed?
-        assert_equal true, hashy.changed?("name")
+        assert_equal true, hashy.changed?(:name)
         assert_equal [nil, "Paul"], hashy.name_change
-        assert_equal [nil, "Paul"], hashy.change("name")
+        assert_equal [nil, "Paul"], hashy.change(:name)
         assert_equal({"name" => [nil, "Paul"]}, hashy.changes)
 
         hashy.name = nil
@@ -426,9 +419,9 @@ module Unit
         assert_equal false, hashy.dirty?
         assert_equal false, hashy.changed?
         assert_equal false, hashy.name_changed?
-        assert_equal false, hashy.changed?("name")
+        assert_equal false, hashy.changed?(:name)
         assert_equal nil, hashy.name_change
-        assert_equal nil, hashy.change("name")
+        assert_equal nil, hashy.change(:name)
         assert_equal({}, hashy.changes)
 
         hashy.name = "Stephan"
@@ -436,9 +429,9 @@ module Unit
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.name_changed?
-        assert_equal true, hashy.changed?("name")
+        assert_equal true, hashy.changed?(:name)
         assert_equal [nil, "Stephan"], hashy.name_change
-        assert_equal [nil, "Stephan"], hashy.change("name")
+        assert_equal [nil, "Stephan"], hashy.change(:name)
         assert_equal({"name" => [nil, "Stephan"]}, hashy.changes)
 
         hashy.clean_up!
@@ -446,9 +439,9 @@ module Unit
         assert_equal false, hashy.dirty?
         assert_equal false, hashy.changed?
         assert_equal false, hashy.name_changed?
-        assert_equal false, hashy.changed?("name")
+        assert_equal false, hashy.changed?(:name)
         assert_equal nil, hashy.name_change
-        assert_equal nil, hashy.change("name")
+        assert_equal nil, hashy.change(:name)
         assert_equal({}, hashy.changes)
 
         hashy.name = "Chris"
@@ -456,11 +449,11 @@ module Unit
         assert_equal true, hashy.dirty?
         assert_equal true, hashy.changed?
         assert_equal true, hashy.name_changed?
-        assert_equal true, hashy.changed?("name")
+        assert_equal true, hashy.changed?(:name)
         assert_equal "Stephan", hashy.name_was
-        assert_equal "Stephan", hashy.was("name")
+        assert_equal "Stephan", hashy.was(:name)
         assert_equal ["Stephan", "Chris"], hashy.name_change
-        assert_equal ["Stephan", "Chris"], hashy.change("name")
+        assert_equal ["Stephan", "Chris"], hashy.change(:name)
         assert_equal({"name" => ["Stephan", "Chris"]}, hashy.changes)
 
         hashy.name = "Stephan"
@@ -468,18 +461,10 @@ module Unit
         assert_equal false, hashy.dirty?
         assert_equal false, hashy.changed?
         assert_equal false, hashy.name_changed?
-        assert_equal false, hashy.changed?("name")
+        assert_equal false, hashy.changed?(:name)
         assert_equal nil, hashy.name_change
-        assert_equal nil, hashy.change("name")
+        assert_equal nil, hashy.change(:name)
         assert_equal({}, hashy.changes)
-
-        assert_raises(IndexError) do
-          hashy.changed? :name
-        end
-
-        assert_raises(IndexError) do
-          hashy.change :name
-        end
 
         assert_raises(NoMethodError) do
           hashy.company

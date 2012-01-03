@@ -1,4 +1,4 @@
-class DirtyHashy < HashWithIndifferentAccess
+class DirtyHashy < Hash
   MAJOR = 0
   MINOR = 1
   TINY  = 3
