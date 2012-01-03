@@ -26,15 +26,23 @@ Run the following in your console to install with Bundler:
   bundle install
 </pre>
 
+h2. DirtyHashy versus DirtyIndifferentHashy
+
+"On request":https://github.com/archan937/dirty_hashy/issues/1 of "@technoweenie":https://twitter.com/technoweenie, I have released DirtyHashy v0.2.0. Previous to this release, the @DirtyHashy@ class inherited from ActiveSupport's @HashWithIndifferentAccess@ *but that has changed*.
+
+As of the @0.2.0@ release, the @DirtyHashy@ class is inherited from the @Hash@ class. So I have introduced @DirtyIndifferentHashy@ which resembles the @DirtyHashy@ class of the @0.1.x@ releases. You can check out the different types of behaviour by looking at the "DirtyHashy test":https://github.com/archan937/dirty_hashy/blob/279da72873a91216dbecadb3a6d53ebae2fd8198/test/unit/test_dirty_hashy.rb and "DirtyIndifferentHashy test":https://github.com/archan937/dirty_hashy/blob/279da72873a91216dbecadb3a6d53ebae2fd8198/test/unit/test_dirty_indifferent_hashy.rb.
+
+*Note*: This README will continue focusing on the usage of the @DirtyIndifferentHashy@ class and @Dirty::Attributes@ module.
+
 h2. Usage
 
-Using @DirtyHashy@ is pretty straightforward and can be used as follows:
+Using @DirtyIndifferentHashy@ is pretty straightforward and can be used as follows:
 
 <pre>
   require "rubygems"
   require "dirty_hashy"
 
-  h = DirtyHashy.new
+  h = DirtyIndifferentHashy.new
   h.dirty? #=> false
   h[:name] = "Paul"
   h.dirty? #=> true
@@ -64,17 +72,17 @@ Using @DirtyHashy@ is pretty straightforward and can be used as follows:
   h.change :company #=> ["Internetbureau Holder B.V.", nil]
 </pre>
 
-h3. Method mapping DirtyHashy
+h3. Method mapping DirtyIndifferentHashy
 
-You can map methods within a DirtyHashy in order to provide convenience methods like @name@, @name=@, @name_changed?@, @name_was@ and @name_change@. Just pass @true@ for the @map_methods@ argument when initializing a DirtyHashy:
+You can map methods within a DirtyIndifferentHashy in order to provide convenience methods like @name@, @name=@, @name_changed?@, @name_was@ and @name_change@. Just pass @true@ for the @map_methods@ argument when initializing a DirtyIndifferentHashy:
 
 <pre>
   require "rubygems"
   require "dirty_hashy"
 
-  h = DirtyHashy.new({}, true)
+  h = DirtyIndifferentHashy.new({}, true)
   h.dirty? #=> false
-  h.name #=> NoMethodError: undefined method `name' for {}:DirtyHashy
+  h.name #=> NoMethodError: undefined method `name' for {}:DirtyIndifferentHashy
   h.name = "Paul"
   h.dirty? #=> true
   h.name_changed? #=> true
@@ -92,15 +100,15 @@ You can map methods within a DirtyHashy in order to provide convenience methods 
   h.changes #=> {"name"=>["Paul", "Engel"], "foo"=>[nil, "bar"]}
 </pre>
 
-h3. Method mapping DirtyHashy with key restriction
+h3. Method mapping DirtyIndifferentHashy with key restriction
 
-Along with providing convenience methods, you can also restrict the range of keys you are permitted to read / write / merge / replace of a DirtyHash:
+Along with providing convenience methods, you can also restrict the range of keys you are permitted to read / write / merge / replace of a DirtyIndifferentHashy:
 
 <pre>
   require "rubygems"
   require "dirty_hashy"
 
-  h = DirtyHashy.new({}, true, [:name])
+  h = DirtyIndifferentHashy.new({}, true, [:name])
   h.dirty? #=> false
   h.name #=> nil
   h.name = "Paul"
@@ -112,8 +120,8 @@ Along with providing convenience methods, you can also restrict the range of key
   h.name #=> "Engel"
   h.name_was #=> nil
   h.name_change #=> [nil, "Engel"]
-  h.foo #=> NoMethodError: undefined method `foo' for {"name"=>"Engel"}:DirtyHashy
-  h.foo = "bar" #=> NoMethodError: undefined method `foo=' for {"name"=>"Engel"}:DirtyHashy
+  h.foo #=> NoMethodError: undefined method `foo' for {"name"=>"Engel"}:DirtyIndifferentHashy
+  h.foo = "bar" #=> NoMethodError: undefined method `foo=' for {"name"=>"Engel"}:DirtyIndifferentHashy
   h.clean_up!
   h.replace :name => "Paul"
   h.changes #=> {"name"=>["Engel", "Paul"]}
@@ -217,7 +225,8 @@ And last but not least: don't care about specifying the attributes available? We
 
 h2. Last remarks
 
-Please check out "test/unit/test_dirty_hashy.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_hashy.rb and "test/unit/test_dirty_attributes.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_attributes.rb the tests available. You can run the unit tests with @rake@ within the terminal.
+Please check out "test/unit/test_dirty_hashy.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_hashy.rb, "test/unit/test_dirty_indifferent_hashy.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_indifferent_hashy.rb and "test/unit/test_dirty_attributes.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_attributes.rb the tests available.
+You can run the unit tests with @rake@ within the terminal.
 
 Also, the DirtyHashy repo is provided with @script/console@ which you can use for testing purposes.
 
