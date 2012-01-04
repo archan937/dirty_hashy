@@ -3,8 +3,8 @@
 Gem::Specification.new do |gem|
   gem.authors       = ["Paul Engel"]
   gem.email         = ["paul.engel@holder.nl"]
-  gem.description   = %q{Dirty tracking within hashes with indifferent access or objects as it is expected to be!}
-  gem.summary       = %q{Dirty tracking within hashes with indifferent access or objects as it is expected to be!}
+  gem.description   = %q{Dirty tracking within hashes (with or without indifferent access) or objects as it is expected to be!}
+  gem.summary       = %q{Dirty tracking within hashes (with or without indifferent access) or objects as it is expected to be!}
   gem.homepage      = "https://github.com/archan937/dirty_hashy"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }

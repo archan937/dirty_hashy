@@ -1,6 +1,6 @@
 h1. DirtyHashy
 
-Dirty tracking within hashes with indifferent access or objects as it is expected to be!
+Dirty tracking within hashes (with or without indifferent access) or objects as it is expected to be!
 
 h2. Introduction
 
