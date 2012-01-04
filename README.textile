@@ -225,7 +225,7 @@ And last but not least: don't care about specifying the attributes available? We
 
 h2. Last remarks
 
-Please check out "test/unit/test_dirty_hashy.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_hashy.rb, "test/unit/test_dirty_indifferent_hashy.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_indifferent_hashy.rb and "test/unit/test_dirty_attributes.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_attributes.rb the tests available.
+Please check out "test/unit/test_dirty_hashy.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_hashy.rb, "test/unit/test_dirty_indifferent_hashy.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/test_dirty_indifferent_hashy.rb and "test/unit/dirty/test_attributes.rb":https://github.com/archan937/dirty_hashy/blob/master/test/unit/dirty/test_attributes.rb the tests available.
 You can run the unit tests with @rake@ within the terminal.
 
 Also, the DirtyHashy repo is provided with @script/console@ which you can use for testing purposes.
