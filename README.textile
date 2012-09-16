@@ -1,4 +1,4 @@
-h1. DirtyHashy
+h1. DirtyHashy "!https://secure.travis-ci.org/archan937/dirty_hashy.png!":http://travis-ci.org/archan937/dirty_hashy
 
 Dirty tracking within hashes (with or without indifferent access) or objects as it is expected to be!
 
